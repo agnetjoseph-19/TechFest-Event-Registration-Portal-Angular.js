@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="campus360">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>TechFest Event Registration Portal</title>
+
+    <script src="node_modules/angular/angular.min.js"></script>
+
+    <script src="js/app.js"></script>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+<body ng-controller="dashboardcontroller">
+
+    <h1>{{eventName}}</h1>
+
+    <hr>
+
+    <h2>Event Dashboard</h2>
+
+    <label>Event Name</label>
+
+    <br>
+
+    <input type="text"
+           ng-model="eventName">
+
+    <br><br>
+
+    <label>Organizer Name</label>
+
+    <br>
+
+    <input type="text"
+           ng-model="organizer">
+
+    <br><br>
+
+    <label>Organizer Text Color</label>
+
+    <br>
+
+    <input type="text"
+           ng-model="organizerColor">
+
+    <p ng-style="{
+            'color': organizerColor,
+            'font-weight':'bold'
+        }">
+
+        Organizer :
+        {{organizer}}
+
+    </p>
+
+    <br>
+
+    <label>Total Participants</label>
+
+    <br>
+
+    <input type="number"
+           ng-model="participantCount">
+
+    <button ng-click="addParticipant()">
+
+        Add Participant
+
+    </button>
+
+    <p ng-class="{
+            'green': participantCount >= 100,
+            'red': participantCount < 100
+        }">
+
+        Total Participants :
+        {{participantCount | number}}
+
+    </p>
+
+    <br>
+
+    <label>Event Date</label>
+
+    <p>
+
+        {{eventDate | date:'mediumDate'}}
+
+    </p>
+
+    <br>
+
+    <label>Registration Fee</label>
+
+    <p>
+
+        {{registrationFee | currency}}
+
+    </p>
+
+    <hr>
+
+    <h2>Filter Demo</h2>
+
+    <p>
+
+        Event Name :
+        {{eventName | uppercase}}
+
+    </p>
+
+    <p>
+
+        Organizer :
+        {{organizer | lowercase}}
+
+    </p>
+
+    <p>
+
+        Participants :
+        {{participantCount | number}}
+
+    </p>
+
+    <p>
+
+        Date :
+        {{eventDate | date:'dd/MM/yyyy'}}
+
+    </p>
+
+    <p>
+
+        Fee :
+        {{registrationFee | currency}}
+
+    </p>
+
+    <hr>
+
+    <h2>Event Category</h2>
+
+    <label>Select Category</label>
+
+    <br><br>
+
+    <select ng-model="selectedCategory"
+            ng-options="category for category in categories">
+
+    </select>
+
+    <br><br>
+
+    <p>
+
+        Selected Category :
+        {{selectedCategory}}
+
+    </p>
+
+    <hr>
+
+    <h2>Category Information</h2>
+
+    <div ng-switch="selectedCategory">
+
+        <p ng-switch-when="AI">
+
+            AI requires a Google Colab setup.
+
+        </p>
+
+        <p ng-switch-when="Cyber Security">
+
+            Bring your own Kali Linux environment.
+
+        </p>
+
+        <p ng-switch-when="Web Development">
+
+            Pre-install Node.js and VS Code.
+
+        </p>
+
+        <p ng-switch-default>
+
+            Standard track guidelines apply.
+
+        </p>
+
+    </div>
+
+    <hr>
+
+    <h2>ng-readonly Demo</h2>
+
+    <div ng-init="eventCode='TF2026'">
+
+        <label>Event Code</label>
+
+        <br><br>
+
+        <input type="text"
+               ng-model="eventCode"
+               ng-readonly="isReadOnly">
+
+    </div>
+
+    <br><br>
+
+    <label>Event ID</label>
+
+    <br>
+
+    <input type="text"
+           ng-model="eventId"
+           ng-readonly="isReadOnly">
+
+    <hr>
+
+    <button ng-click="toggleParticipants()">
+
+        Show / Hide Participants
+
+    </button>
+
+    <div ng-show="showParticipants">
+
+        <h2>Registered Participants</h2>
+
+        <table border="1"
+               cellpadding="10">
+
+            <thead>
+
+                <tr>
+
+                    <th>No.</th>
+
+                    <th>Name</th>
+
+                    <th>Email</th>
+
+                    <th>Phone</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr ng-repeat="participant in participants">
+
+                    <td>{{$index + 1}}</td>
+
+                    <td>{{participant.name}}</td>
+
+                    <td>{{participant.email | lowercase}}</td>
+
+                    <td>{{participant.phone}}</td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <hr>
+
+    <h2>Participant Registration</h2>
+
+    <form name="registrationForm"
+          novalidate
+          ng-submit="submitRegistration()">
+
+        <label>Participant Name</label>
+
+        <br>
+
+        <input type="text"
+               name="participantName"
+               ng-model="newParticipant.name"
+               ng-minlength="3"
+               ng-maxlength="20"
+               required>
+
+        <p ng-show="registrationForm.participantName.$touched &&
+                    registrationForm.participantName.$error.required"
+           style="color:red">
+
+            Participant name is required.
+
+        </p>
+
+        <p ng-show="registrationForm.participantName.$touched &&
+                    registrationForm.participantName.$error.minlength"
+           style="color:red">
+
+            Minimum 3 characters required.
+
+        </p>
+
+        <p ng-show="registrationForm.participantName.$touched &&
+                    registrationForm.participantName.$error.maxlength"
+           style="color:red">
+
+            Maximum 20 characters allowed.
+
+        </p>
+
+        <br><br>
+
+        <label>Email Address</label>
+
+        <br>
+
+        <input type="email"
+               name="participantEmail"
+               ng-model="newParticipant.email"
+               required>
+
+        <p ng-show="registrationForm.participantEmail.$touched &&
+                    registrationForm.participantEmail.$error.required"
+           style="color:red">
+
+            Email is required.
+
+        </p>
+
+        <p ng-show="registrationForm.participantEmail.$touched &&
+                    registrationForm.participantEmail.$error.email"
+           style="color:red">
+
+            Enter a valid email address.
+
+        </p>
+
+        <br><br>
+                <label>Phone Number</label>
+
+        <br>
+
+        <input type="text"
+               name="participantPhone"
+               ng-model="newParticipant.phone"
+               ng-pattern="/^[0-9]{10}$/"
+               required>
+
+        <p ng-show="registrationForm.participantPhone.$touched &&
+                    registrationForm.participantPhone.$error.required"
+           style="color:red">
+
+            Phone number is required.
+
+        </p>
+
+        <p ng-show="registrationForm.participantPhone.$touched &&
+                    registrationForm.participantPhone.$error.pattern"
+           style="color:red">
+
+            Phone number must contain exactly 10 digits.
+
+        </p>
+
+        <br><br>
+
+        <button type="submit"
+                ng-disabled="registrationForm.$invalid">
+
+            Register Participant
+
+        </button>
+
+        <button type="reset">
+
+            Reset
+
+        </button>
+
+    </form>
+
+    <hr>
+
+    <h2>Form Status</h2>
+
+    <p>
+
+        Form Valid :
+        {{registrationForm.$valid}}
+
+    </p>
+
+    <p>
+
+        Form Invalid :
+        {{registrationForm.$invalid}}
+
+    </p>
+
+    <p>
+
+        Form Dirty :
+        {{registrationForm.$dirty}}
+
+    </p>
+
+    <p>
+
+        Form Pristine :
+        {{registrationForm.$pristine}}
+
+    </p>
+
+    <p>
+
+        Participant Name Touched :
+        {{registrationForm.participantName.$touched}}
+
+    </p>
+
+    <p>
+
+        Participant Name Valid :
+        {{registrationForm.participantName.$valid}}
+
+    </p>
+
+    <p>
+
+        Participant Name Invalid :
+        {{registrationForm.participantName.$invalid}}
+
+    </p>
+
+    <hr>
+
+    <h2>Registered Participants</h2>
+
+    <table border="1"
+           cellpadding="10"
+           cellspacing="0">
+
+        <thead>
+
+            <tr>
+
+                <th>No.</th>
+
+                <th>Participant Name</th>
+
+                <th>Email Address</th>
+
+                <th>Phone Number</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr ng-repeat="participant in participants">
+
+                <td>
+
+                    {{$index + 1}}
+
+                </td>
+
+                <td>
+
+                    {{participant.name}}
+
+                </td>
+
+                <td>
+
+                    {{participant.email | lowercase}}
+
+                </td>
+
+                <td>
+
+                    {{participant.phone}}
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</body>
+
+</html>
